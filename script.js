@@ -1,68 +1,81 @@
 // Get a reference to the #add-employees-btn element
 const addEmployeesBtn = document.querySelector('#add-employees-btn');
 
+class Employee {
+    constructor() {
+        this.firstName = null;
+        this.lastName = null;
+        this.salary = 0;
+    }
+    setFirstName() {
+        let name = prompt ("Please enter employee's first name.");
+        this.firstName = name;
+        return name;
+    }
+    setLastName() {
+        let name = prompt ("Please enter employee's last name.");
+        this.lastName = name;
+        return name;
+    }
+    setSalary() {
+        let salary = prompt ("Please enter employee's salary.");
+        if (salary === null) {
+          // Cancelled out of salary selector
+          return salary;
+        }
+        salary = parseFloat(salary);
+        if (!isNaN(salary)) {
+            this.salary = salary;
+        }
+        return salary;
+    }
+    get fullName() {
+        return `${this.firstName} ${this.lastName}`
+    }
+
+}
+
 // Collect employee data
 const collectEmployees = function () {
-  // TODO: Get user input to create and return an array of employee objects
-  let employeeArr = [];
-  let employee = {
-    firstName: "",
-    lastName: "",
-    salary: 0,
-  }
+    let employeesArray = [];
 
-  let addEmp = true
-  while (addEmp) {
-    employee.firstName = prompt ("Please enter employee's first name.");
-    employee.lastName = prompt ("Please enter employee's last name.");
-    employee.salary = prompt ("Please enter employee's salary.");
-    if (isNaN(employee.salary)) {
-      alert ("Please enter a number. Use digits only.");
-      continue;
+    while (true) {
+        let employee = new Employee()
+        if (employee.setFirstName() === null
+            || employee.setLastName() === null
+            || employee.setSalary() === null) {
+            break;
+        }
+        employeesArray.push(employee);
+        if(!confirm("Would you like to add another employee")) {
+          break;
+        }
     }
-    //push the object into the array Hint: How do I push a string into an array
-    employeeArr.push(employee);
-    
-    //set object back to orignial empty quotes and 0 for salary
-    let addAgain = confirm("Would you like to add another employee") 
-    if(addAgain === false) {
-      // got to next step, to display employees, consider using an array of objects
-      employee = {
-        firstName: "",
-        lastName: "",
-        salary: 0,
-      }
-      displayEmployees(employeeArr);
-      break;
-
-    }
-  }
-  return employeeArr;
+    displayEmployees(employeesArray);
+    return employeesArray;
 };
 
 // Display the average salary
 const displayAverageSalary = function (employeesArray) {
-  // TODO: Calculate and display the average salary
-  let averageSal = 0
-  let totalSal = 0
-  //for loop starts to add salaries
-  for (i = 0; i < employeesArray.length; i++){
-    totalSal += employeesArray[i].salary; 
-    //finish for loop
-  }
-  //divide by total number of employees
-  averageSal = totalSal / employeesArray.length;
-  console.log("The average employee salary between our " + employeesArray.length + " employees is " + averageSal + ".");
+    if (employeesArray.length === 0) {
+        console.log("The company has no employees, so technically, the average salary is infinite :)")
+        return;
+    }
+    const averageSal = employeesArray.reduce((total, employee) => total + employee.salary, 0) / employeesArray.length;
+    console.log(`The average employee salary between our ${employeesArray.length} employees is ${averageSal}.`);
 }
 
 // Select a random employee
 const getRandomEmployee = function (employeesArray) {
-  // TODO: Select and display a random employee
-  // Employee array.length in math.random to choose a random employee
-  let randomIndex = Math.floor(Math.random() * employeesArray.length);
-  let randomEmployee = employeesArray[randomIndex];
-  console.log("Congratulations to " + randomEmployee.firstName + " " + randomEmployee.lastNameour + " random drawing winner!");
+    if (employeesArray.length === 0) {
+        console.log(`The company has no employees, so there are no winners :(`);
+        return;
+    }
+    const randomIndex = Math.floor(Math.random() * employeesArray.length);
+    const randomEmployee = employeesArray[randomIndex];
+    console.log(`Congratulations to ${randomEmployee.fullName} our random drawing winner!`);
 }
+
 /*
   ====================
   STARTER CODE
